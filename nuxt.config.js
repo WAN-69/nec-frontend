@@ -51,6 +51,10 @@ export default {
     baseURL: '/',
   },
 
+  router: {
+    routeNameSplitter: '/'
+  },
+
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
@@ -91,6 +95,8 @@ export default {
     color: '#3B8070',
     background: 'white'
   },
-  pageTransition: "slide",
+
+  // Transition
+  pageTransition: 'fadeX',
   layoutTransition: 'fade'
 }
