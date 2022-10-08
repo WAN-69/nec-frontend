@@ -2,7 +2,7 @@
     <div>
         <!-- Sidebar -->
         <div class="fixed -py-2 0 w-60 h-full bg-gray-100 border border-r" id="sidenavSecExample">
-            <nuxt-link to="/admin/dashboard">
+            <nuxt-link to="/">
                 <div class="pt-4 pb-5 px-4">
                     <div class="flex items-center">
                         <div class="shrink-0">
@@ -62,8 +62,8 @@
                     </svg>
                     Profile
                 </nuxt-link>
-                <nuxt-link to="/auth/login"
-                    class="flex items-center text-sm font-semibold py-4 px-6 h-12 overflow-hidden text-gray-500 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                <button type="button" @click="logout" to="/auth/login"
+                    class="flex w-full items-center text-sm font-semibold py-4 px-6 h-12 overflow-hidden text-gray-500 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
                     data-mdb-ripple="true" data-mdb-ripple-color="primary">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                         class="w-5 h-5 mr-2">
@@ -72,7 +72,7 @@
                             clip-rule="evenodd" />
                     </svg>
                     Log Out
-                </nuxt-link>
+                </button>
             </div>
         </div>
         <div class="main-content">
@@ -82,27 +82,35 @@
                     <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                         <div class="ml-60">
                             <ul class="flex items-center">
-                                <li v-for="(item,index) in $nuxt.$route.name.split('/').filter(item => item != 'admin')" :key="index" class="flex items-center">
-                                    <a href="#" class="font-semibold text-base text-gray-600 hover:text-primary capitalize">{{ item }}</a>
-                                    <span v-if="index != Object.keys($nuxt.$route.name.split('/').filter(item => item != 'admin')).length - 1" class="px-3"> 
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                                            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                                        </svg>                                           
+                                <li v-for="(item,index) in $nuxt.$route.name.split('/').filter(item => item != 'admin')"
+                                    :key="index" class="flex items-center">
+                                    <a href="#"
+                                        class="font-semibold text-base text-gray-600 hover:text-primary capitalize">{{
+                                        item }}</a>
+                                    <span
+                                        v-if="index != Object.keys($nuxt.$route.name.split('/').filter(item => item != 'admin')).length - 1"
+                                        class="px-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            class="w-5 h-5">
+                                            <path fill-rule="evenodd"
+                                                d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                                clip-rule="evenodd" />
+                                        </svg>
                                     </span>
                                 </li>
                             </ul>
                         </div>
                         <div class="flex items-center lg:order-2 gap-2 -mr-6 dropdown relative" id="dropdownMenuButton1"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="grid grid-rows-2">
-                                <span class="text-sm text-gray-500 font-bold capitalize mr-1">User</span>
-                                <span class="text-xs text-gray-500 font-medium capitalize mr-1">Role</span>
+                            <div class="grid grid-rows-2 text-right">
+                                <span class="text-sm text-gray-500 font-bold capitalize mr-1">{{ user.name }}</span>
+                                <span class="text-xs text-gray-500 font-medium capitalize mr-1">{{ user.email }}</span>
                             </div>
                             <div class="dropdown relative">
                                 <a class="dropdown-toggle flex items-center hidden-arrow" href="#"
                                     id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown"
                                     aria-expanded="false">
-                                    <img src="https://avatars.dicebear.com/api/adventurer-neutral/logoba.svg"
+                                    <img :src="`https://avatars.dicebear.com/api/adventurer-neutral/${user.name}.svg`"
                                         class="rounded-full" style="height: 40px; width: 40px" alt="" loading="lazy" />
                                 </a>
                             </div>
@@ -120,8 +128,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-    setup(){
+    computed: {
+        ...mapGetters([
+            'user',
+            'isLoggedIn'
+        ])
+    },
+    middleware: 'auth',
+    setup() {
         // const routeName = ref($nuxt.$route.name.split("/"));
         // return {routeName}
     },
@@ -163,6 +179,22 @@ export default {
                     ]
                 }
             ]
+        }
+    },
+    methods: {
+        async logout() {
+            await this.$auth.logout();
+            this.$router.push({ path: '/auth/login' });
+            this.$toast.show({
+                type: 'success',
+                title: 'Success',
+                message: 'Berhasil Logout',
+                classToast: 'bg-teal-500',
+                classTitle: 'text-teal-100',
+                classMessage: 'text-teal-200',
+                classClose: 'text-teal-300',
+                classTimeout: 'bg-teal-800',
+            })
         }
     }
 };

@@ -18,7 +18,8 @@
 
                     <div class="hidden md:block">
                         <!-- <a href="#" class="inline-block py-1 md:py-4 text-gray-500 hover:text-gray-600 mr-6">Login</a> -->
-                        <nuxt-link to="auth/login" class="inline-block py-2 font-semibold px-4 text-gray-500 bg-white hover:bg-gray-100 rounded-lg">Login</nuxt-link>
+                        <nuxt-link v-if="this.$auth.loggedIn" to="/admin/dashboard" class="inline-block py-2 font-semibold px-4 text-gray-500 bg-white hover:bg-gray-100 rounded-lg">Dashboard</nuxt-link>
+                        <nuxt-link v-else to="auth/login" class="inline-block py-2 font-semibold px-4 text-gray-500 bg-white hover:bg-gray-100 rounded-lg">Login</nuxt-link>
                     </div>
                 </div>
             </div>
@@ -131,7 +132,7 @@
 
 <script>
 export default {
-
+    
 }
 </script>
 
